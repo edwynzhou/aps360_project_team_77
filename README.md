@@ -1,6 +1,7 @@
-# APS360 Project
+# Chest X-Ray Imaging Neural Network | APS360 Project
 
-Chest X-Ray Imaging Neural Network
+
+
 
 ## Data
 - Datasets retrieved from https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia?resource=download
