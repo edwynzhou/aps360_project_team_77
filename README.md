@@ -34,7 +34,54 @@ To visualize the decision boundary and the classification results of our SVM mod
 <img width="631" alt="Screenshot 2025-05-15 at 11 36 34 AM" src="https://github.com/user-attachments/assets/4a7861ce-3bb8-4197-99e3-694a11e17f2d" />
 
 ### Primary Model
+The team designed a model that integrates a CNN and ANN in order to classify input images into normal or pneumonia-positive. 
+
 <img width="641" alt="Screenshot 2025-05-15 at 11 38 47 AM" src="https://github.com/user-attachments/assets/9ed0cd48-cb4f-4f5f-9983-0186d5b5cd9e" />
+
+
+The model accepts a 3D tensor with dimensions 3 × 224 × 244 (channels × height × width) and applies 2D-convolutional filters (kernels) to extract meaningful features interpretable by the model. Following each convolution, max pooling kernel consolidates the features extracted and passes the output to another convolutional layer. This process is repeated multiple times to progressively refine the features and emphasize the most relevant information. At this point, the features extracted by the CNN are sufficiently relevant to make the classification problem linearly separable. Thus, the features are flattened to one dimension and fed to a fully connected network (ANN) to classify the image. 
+
+To optimize the model’s parameters (weights and biases) during training, a Cross Entropy Loss function is used and a Steepest Gradient Descent function with momentum set to 0.9 to ensure convergence while avoiding getting stuck on local minima, enhancing learning efficiency.
+
+Hyperparameter tuning
+To optimize model performance, the team iteratively tested various hyperparameters, including the number of convolutional and pooling layers, batch size, learning rate and number of fully connected layers. Three different configurations were evaluated. After each iteration, model performance was recorded and hyper parameters were fine-tuned to improve outcomes for the next iteration. The results of this process may be found in the table below.
+
+<img width="633" alt="Screenshot 2025-05-15 at 11 40 36 AM" src="https://github.com/user-attachments/assets/8995b697-4608-4d16-af5d-399618eb8bcd" />
+
+Best Primary Model
+
+After this exploration and based on the smallest training and validation error, the team picked the following model as the best primary model.
+
+Three convolutional layers: For small classification problems, deep networks might overcomplicate and overfit the dataset, while shallow networks might underfit complex data. Three convolutional layers strike a balance between feature extraction capability and computational cost, while simultaneously avoiding the network from being too deep and risking overfitting or Vanishing/Exploding gradients.  
+First layer applies 16 filters, second applies 32, third applies 56.
+Feature space is reduced from 224 →110 → 53 → 24. 
+Kernel size 5×5: High-dimensional kernels are computationally expensive and might miss important features due to their high span over the input data. Low-dimensional kernels may not be receptive enough to important features, hence failing to capture relevant information. For medical imaging, 5×5 kernels ensure that features like lung-opacities that extend over several pixels are detected.
+Max-pooling 2×2 with Stride 2: Big pooling kernels Max pooling is used to retain the highest activations and thus the most relevant data of the extracted feature. Big pooling kernels may ignore subtleties in the feature space that may be relevant for the classification task later on. Hence, a 2×2 pooling kernel with stride 2 efficiently reduces the feature space by approximately half while decreasing computational cost, memory usage, and increasing focus on dominant patterns. 
+Batch size of 54: Small batch sizes lead to gradient noise, while large batches though smoother come with a high memory cost. A batch size of 54 offers a balance between gradient stability and memory usage, allowing for reasonably fast optimization updates without excessive noise.
+Learning rate 0.015: Small learning rates decrease learning speed and may lead to getting stuck on local minima, while big learning rates increase learning speed but at the cost of unstable convergence and possibly overfitting the dataset. This learning rate, though higher than conventional models, is a perfect fit for our choice of optimization function (SGD with momentum), as it ensures convergence without being too big to overshoot and go past a local minima.
+Two fully-connected layers (ANN): Though shallow, a two-layer ANN with high width (1st layer 512 neurons, 2nd layer 2 neurons) proved to be enough to solve the problem, meaning that the CNN extracted enough features with sufficient detail for the problem to be linearly separable and easily solved using only 2 layers of connected neurons. 
+
+5.4 Model Performance
+
+5.4.1 Verifying learning ability
+
+The model was trained on a sample of 20 images over 30 epochs (Batch size =12, learning rate = 0.01) to test overfitting. As seen on Figure 8, the model reached 0% training error and loss, meaning that memorization of the small training dataset was achieved. Additionally, we can note a 50% validation error and a spike in validation loss at the end of Epoch 30, both very high and showcasing poor performance, indicative of overfitting.
+
+
+Figure 8
+
+5.4.2 Model performance on test data
+
+The model chosen and described in 5.3 was trained and validated using the 80/10/10 split described in section 3. Figure 9 shows the results of training.
+
+Figure 9
+
+As we can see, spikes in validation error and loss may be indicative of overshooting, product of a big learning rate or batch size. However, after epoch 20, the model reaches convergence stability. Similarly, there are no spikes after epoch 20 and no big difference between validation and training error, which suggests there was no overfitting.
+
+
+Figure 10: Confusion matrix
+
+After testing the model against the test dataset, Type I and Type II errors arise as seen in Figure 10. Type I errors (False Positive: 21.43% rate), are most likely caused by the model identifying a pattern in the “Normal” X-ray image that it deemed important in the Pneumonia case, possibly linked to image quality or patients having conditions that mimic Pneumonia on X-rays. Type II errors (False Negatives: 50% rate) may be caused by the model not picking up on subtle features showcased on Pneumonia-positive X-rays. 
 
 
 
