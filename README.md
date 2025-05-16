@@ -20,15 +20,15 @@ The dataset was also unbalanced, which initially resulted in low validation erro
 
 To establish a baseline for comparison, we will implement a Support Vector Machine (SVM) with a linear kernel to classify our data into two labels: normal or pneumonia-positive. The SVM will identify the optimal hyperplane that maximizes the margin between the closest data points of each class, effectively separating them. By fitting the data to this model, the SVM will learn a decision boundary based on the discovered hyperplane, providing a foundational benchmark for evaluating our approach.
 
-SVM Data Processing
+#### SVM Data Processing
 Since SVM’s require two-dimensional input and our processed data was originally three-dimensional, the data was reshaped accordingly. To address this, all of the images were converted to uniform size and then transformed into NumPy arrays. Data was flattened to a two-dimensional array to make it compatible with the SVM model. Additionally, the same 80/10/10 training split was maintained as the CNN models, ensuring consistency across model  hi grace, are you done with your section? evaluations. 
 
-Training the SVM
+#### Training the SVM
 To train the baseline model, the Scikit-Learn’s Support Vector Classifier (SVC) was used with a linear kernel to distinguish between normal and pneumonia-positive cases. The dataset was split into training and test subsets using the 80/10/10 distribution as previously justified. After training the model on the preprocessed dataset, the model performance was evaluated by comparing the predicted labels with the ground truth labels using the Scikit-Learn’s metrics library. It was found that the model achieved a training accuracy of 93.33%, with an error of 6.67%. Figure 5 shows the confusion matrix that highlights the model’s performance, detailing the number of correctly and incorrectly classified samples across both classes.
 
 <img width="474" alt="Screenshot 2025-05-15 at 11 35 49 AM" src="https://github.com/user-attachments/assets/38453f30-fa0c-43d1-8c72-8ba3207e6990" />
 
-Visualizing the Decision Boundary
+#### Visualizing the Decision Boundary
 To visualize the decision boundary and the classification results of our SVM model, we applied Principle Component Analysis (PCA) to reduce the dataset’s dimensionality and project it onto a two-dimensional plane. Since PCA preserves linear trends in the data, it provides a useful approximation of how the SVM’s hyperplane separates the boundary of the two classes. Figure 6 below illustrates the decision boundary, along with the support vectors that influence it. Due to computational constraints, the grid size was reduced, meaning some data points are not fully represented in the visualization. Despite this limitation, the PCA projection offers valuable insight into how the model was able to differentiate between the two classes.
 
 <img width="631" alt="Screenshot 2025-05-15 at 11 36 34 AM" src="https://github.com/user-attachments/assets/4a7861ce-3bb8-4197-99e3-694a11e17f2d" />
@@ -43,16 +43,15 @@ The model accepts a 3D tensor with dimensions 3 × 224 × 244 (channels × heigh
 
 To optimize the model’s parameters (weights and biases) during training, a Cross Entropy Loss function is used and a Steepest Gradient Descent function with momentum set to 0.9 to ensure convergence while avoiding getting stuck on local minima, enhancing learning efficiency.
 
-Hyperparameter tuning
+#### Hyperparameter tuning
 To optimize model performance, the team iteratively tested various hyperparameters, including the number of convolutional and pooling layers, batch size, learning rate and number of fully connected layers. Three different configurations were evaluated. After each iteration, model performance was recorded and hyper parameters were fine-tuned to improve outcomes for the next iteration. The results of this process may be found in the table below.
 
 <img width="633" alt="Screenshot 2025-05-15 at 11 40 36 AM" src="https://github.com/user-attachments/assets/8995b697-4608-4d16-af5d-399618eb8bcd" />
 
-Best Primary Model
-
+#### Best Primary Model
 After this exploration and based on the smallest training and validation error, the team picked the following model as the best primary model.
 
-Three convolutional layers: For small classification problems, deep networks might overcomplicate and overfit the dataset, while shallow networks might underfit complex data. Three convolutional layers strike a balance between feature extraction capability and computational cost, while simultaneously avoiding the network from being too deep and risking overfitting or Vanishing/Exploding gradients.  
+* Three convolutional layers: For small classification problems, deep networks might overcomplicate and overfit the dataset, while shallow networks might underfit complex data. Three convolutional layers strike a balance between feature extraction capability and computational cost, while simultaneously avoiding the network from being too deep and risking overfitting or Vanishing/Exploding gradients.  
 First layer applies 16 filters, second applies 32, third applies 56.
 Feature space is reduced from 224 →110 → 53 → 24. 
 Kernel size 5×5: High-dimensional kernels are computationally expensive and might miss important features due to their high span over the input data. Low-dimensional kernels may not be receptive enough to important features, hence failing to capture relevant information. For medical imaging, 5×5 kernels ensure that features like lung-opacities that extend over several pixels are detected.
@@ -61,9 +60,10 @@ Batch size of 54: Small batch sizes lead to gradient noise, while large batches 
 Learning rate 0.015: Small learning rates decrease learning speed and may lead to getting stuck on local minima, while big learning rates increase learning speed but at the cost of unstable convergence and possibly overfitting the dataset. This learning rate, though higher than conventional models, is a perfect fit for our choice of optimization function (SGD with momentum), as it ensures convergence without being too big to overshoot and go past a local minima.
 Two fully-connected layers (ANN): Though shallow, a two-layer ANN with high width (1st layer 512 neurons, 2nd layer 2 neurons) proved to be enough to solve the problem, meaning that the CNN extracted enough features with sufficient detail for the problem to be linearly separable and easily solved using only 2 layers of connected neurons. 
 
-5.4 Model Performance
 
-5.4.1 Verifying learning ability
+### Model Performance
+
+#### Verifying learning ability
 
 The model was trained on a sample of 20 images over 30 epochs (Batch size =12, learning rate = 0.01) to test overfitting. As seen on Figure 8, the model reached 0% training error and loss, meaning that memorization of the small training dataset was achieved. Additionally, we can note a 50% validation error and a spike in validation loss at the end of Epoch 30, both very high and showcasing poor performance, indicative of overfitting.
 
