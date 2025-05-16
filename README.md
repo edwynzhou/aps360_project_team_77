@@ -56,33 +56,31 @@ After this exploration and based on the smallest training and validation error, 
   * Kernel size 5×5: High-dimensional kernels are computationally expensive and might miss important features due to their high span over the input data. Low-dimensional kernels may not be receptive enough to important features, hence failing to capture relevant information. For medical imaging, 5×5 kernels ensure that features like lung-opacities that extend over several pixels are detected.
 * Max-pooling 2×2 with Stride 2: Big pooling kernels Max pooling is used to retain the highest activations and thus the most relevant data of the extracted feature. Big pooling kernels may ignore subtleties in the feature space that may be relevant for the classification task later on. Hence, a 2×2 pooling kernel with stride 2 efficiently reduces the feature space by approximately half while decreasing computational cost, memory usage, and increasing focus on dominant patterns. 
 * Batch size of 54: Small batch sizes lead to gradient noise, while large batches though smoother come with a high memory cost. A batch size of 54 offers a balance between gradient stability and memory usage, allowing for reasonably fast optimization updates without excessive noise.
-Learning rate 0.015: Small learning rates decrease learning speed and may lead to getting stuck on local minima, while big learning rates increase learning speed but at the cost of unstable convergence and possibly overfitting the dataset. This learning rate, though higher than conventional models, is a perfect fit for our choice of optimization function (SGD with momentum), as it ensures convergence without being too big to overshoot and go past a local minima.
-Two fully-connected layers (ANN): Though shallow, a two-layer ANN with high width (1st layer 512 neurons, 2nd layer 2 neurons) proved to be enough to solve the problem, meaning that the CNN extracted enough features with sufficient detail for the problem to be linearly separable and easily solved using only 2 layers of connected neurons. 
+* Learning rate 0.015: Small learning rates decrease learning speed and may lead to getting stuck on local minima, while big learning rates increase learning speed but at the cost of unstable convergence and possibly overfitting the dataset. This learning rate, though higher than conventional models, is a perfect fit for our choice of optimization function (SGD with momentum), as it ensures convergence without being too big to overshoot and go past a local minima.
+* Two fully-connected layers (ANN): Though shallow, a two-layer ANN with high width (1st layer 512 neurons, 2nd layer 2 neurons) proved to be enough to solve the problem, meaning that the CNN extracted enough features with sufficient detail for the problem to be linearly separable and easily solved using only 2 layers of connected neurons. 
 
 
 ### Model Performance
 
 #### Verifying learning ability
 
-The model was trained on a sample of 20 images over 30 epochs (Batch size =12, learning rate = 0.01) to test overfitting. As seen on Figure 8, the model reached 0% training error and loss, meaning that memorization of the small training dataset was achieved. Additionally, we can note a 50% validation error and a spike in validation loss at the end of Epoch 30, both very high and showcasing poor performance, indicative of overfitting.
+The model was trained on a sample of 20 images over 30 epochs (Batch size =12, learning rate = 0.01) to test overfitting. As seen in the figure below, the model reached 0% training error and loss, meaning that memorization of the small training dataset was achieved. Additionally, we can note a 50% validation error and a spike in validation loss at the end of Epoch 30, both very high and showcasing poor performance, indicative of overfitting.
 
+<img width="654" alt="Screenshot 2025-05-16 at 6 04 45 PM" src="https://github.com/user-attachments/assets/b76143cb-7893-466a-abca-9e629dc3b8b0" />
 
-Figure 8
+#### Model performance on test data
 
-5.4.2 Model performance on test data
+The model chosen and described in 5.3 was trained and validated using the 80/10/10 split described in section 3. The image below shows the results of the training.
 
-The model chosen and described in 5.3 was trained and validated using the 80/10/10 split described in section 3. Figure 9 shows the results of training.
+<img width="665" alt="Screenshot 2025-05-16 at 6 07 24 PM" src="https://github.com/user-attachments/assets/7b3d207c-c77e-431e-a30a-8ca75ef319d2" />
 
-Figure 9
 
 As we can see, spikes in validation error and loss may be indicative of overshooting, product of a big learning rate or batch size. However, after epoch 20, the model reaches convergence stability. Similarly, there are no spikes after epoch 20 and no big difference between validation and training error, which suggests there was no overfitting.
 
-
-Figure 10: Confusion matrix
-
-After testing the model against the test dataset, Type I and Type II errors arise as seen in Figure 10. Type I errors (False Positive: 21.43% rate), are most likely caused by the model identifying a pattern in the “Normal” X-ray image that it deemed important in the Pneumonia case, possibly linked to image quality or patients having conditions that mimic Pneumonia on X-rays. Type II errors (False Negatives: 50% rate) may be caused by the model not picking up on subtle features showcased on Pneumonia-positive X-rays. 
+<img width="418" alt="Screenshot 2025-05-16 at 6 07 55 PM" src="https://github.com/user-attachments/assets/73d63c9c-cc9f-4d0b-bd2c-aff75c844d12" />
 
 
+After testing the model against the test dataset, Type I and Type II errors arise as seen in the confusion matrix. Type I errors (False Positive: 21.43% rate), are most likely caused by the model identifying a pattern in the “Normal” X-ray image that it deemed important in the Pneumonia case, possibly linked to image quality or patients having conditions that mimic Pneumonia on X-rays. Type II errors (False Negatives: 50% rate) may be caused by the model not picking up on subtle features showcased on Pneumonia-positive X-rays. 
 
 
 ### Challenges
