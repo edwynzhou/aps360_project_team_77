@@ -49,7 +49,7 @@ To optimize model performance, the team iteratively tested various hyperparamete
 <img width="633" alt="Screenshot 2025-05-15 at 11 40 36 AM" src="https://github.com/user-attachments/assets/8995b697-4608-4d16-af5d-399618eb8bcd" />
 
 #### Best Primary Model
-After this exploration and based on the smallest training and validation error, the team picked the following model as the best primary model.
+After this exploration and based on the smallest training and validation error, the team picked the following model as the best primary model with a test accuracy of 97%.
 
 * Three convolutional layers: For small classification problems, deep networks might overcomplicate and overfit the dataset, while shallow networks might underfit complex data. Three convolutional layers strike a balance between feature extraction capability and computational cost, while simultaneously avoiding the network from being too deep and risking overfitting or Vanishing/Exploding gradients. * First layer applies 16 filters, second applies 32, third applies 56.
   * Feature space is reduced from 224 →110 → 53 → 24. 
